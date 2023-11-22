@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">iglu</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.5.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,6 +64,7 @@
 <span>  lv1_hyper <span class="op">=</span> <span class="fl">180</span>,</span>
 <span>  lv2_hyper <span class="op">=</span> <span class="fl">250</span>,</span>
 <span>  dur_length <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>  end_length <span class="op">=</span> <span class="fl">15</span>,</span>
 <span>  subject <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dt0 <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  inter_gap <span class="op">=</span> <span class="fl">45</span>,</span>
@@ -96,7 +97,13 @@
 <dt>dur_length</dt>
 <dd><p>Numeric value specifying the minimum duration in minutes to be
 considered an episode. Note dur_length should be a multiple of the data recording
-interval otherwise the function will round up to the nearest multiple.</p></dd>
+interval otherwise the function will round up to the nearest multiple. Default
+is 15 minutes to match consensus.</p></dd>
+
+
+<dt>end_length</dt>
+<dd><p>Numeric value specifying the minimum duration in minutes of
+improved glycemia for an episode to end. Default is equal to dur_length to match consensus.</p></dd>
 
 
 <dt>subject</dt>
@@ -142,7 +149,7 @@ interval otherwise the function will round up to the nearest multiple.</p></dd>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Elizabeth Chun, Steve Broll, David Buchanan, John Muschelli, Nathaniel Fernandes, Jung Hoon Seo, Johnathan Shih, Jacek Urbanek, John Schwenck, Irina Gaynanova.</p>
+  <p></p><p>Developed by Elizabeth Chun, Steve Broll, David Buchanan, John Muschelli, Nathaniel Fernandes, Irina Gaynanova.</p>
 </div>
 
 <div class="pkgdown-footer-right">

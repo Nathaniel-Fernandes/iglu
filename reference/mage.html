@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">iglu</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.5.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,15 +63,19 @@
 <span>  sd_multiplier <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  short_ma <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  long_ma <span class="op">=</span> <span class="fl">32</span>,</span>
-<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"plus"</span>, <span class="st">"minus"</span><span class="op">)</span>,</span>
-<span>  plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  return_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"num"</span>, <span class="st">"df"</span><span class="op">)</span>,</span>
+<span>  direction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"service"</span>, <span class="st">"avg"</span>, <span class="st">"max"</span>, <span class="st">"plus"</span>, <span class="st">"minus"</span><span class="op">)</span>,</span>
 <span>  dt0 <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  inter_gap <span class="op">=</span> <span class="fl">45</span>,</span>
 <span>  tz <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  inter_gap <span class="op">=</span> <span class="fl">45</span>,</span>
+<span>  max_gap <span class="op">=</span> <span class="fl">180</span>,</span>
+<span>  plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>  show_ma <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  show_ma <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show_excursions <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  plot_type <span class="op">=</span> <span class="st">"ggplot"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -99,24 +103,32 @@ can be specified for <code>version = "naive"</code>, and it is ignored if <code>
 <dd><p>Integer for period length for the long moving average, default value is 32. (Recommended &gt;20)</p></dd>
 
 
-<dt>type</dt>
-<dd><p>One of "plus", "minus", "auto" (Default: auto). Algorithm will either calculate MAGE+ (nadir to peak), MAGE- (peak to nadir), or automatically choose based on the first countable excursion.</p></dd>
+<dt>return_type</dt>
+<dd><p>One of "num" and "df": will return a single value for MAGE or a DataFrame with the</p></dd>
 
 
-<dt>plot</dt>
-<dd><p>Boolean. Returns ggplot if TRUE.</p></dd>
+<dt>direction</dt>
+<dd><p>One of 'service', 'avg', 'max', 'plus', or 'minus'. (Default: "service"). Algorithm will either calculate MAGE+ (nadir to peak), MAGE- (peak to nadir), MAGEavg = avg(MAGE+, MAGE-), MAGEmax = max(MAGE+, MAGE-), or automatically choose MAGE+/MAGE- based on the first countable excursion (i.e., "service").</p></dd>
 
 
 <dt>dt0</dt>
 <dd><p>The time frequency for interpolation in minutes, the default will match the CGM meter's frequency (e.g. 5 min for Dexcom).</p></dd>
 
 
+<dt>tz</dt>
+<dd><p>A character string specifying the time zone to be used. System-specific (see <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></code>), but " " is the current time zone, and "GMT" is UTC (Universal Time, Coordinated). Invalid values are most commonly treated as UTC, on some platforms with a warning.</p></dd>
+
+
 <dt>inter_gap</dt>
 <dd><p>The maximum allowable gap (in minutes) for interpolation. The values will not be interpolated between the glucose measurements that are more than inter_gap minutes apart. The default value is 45 min.</p></dd>
 
 
-<dt>tz</dt>
-<dd><p>A character string specifying the time zone to be used. System-specific (see <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></code>), but " " is the current time zone, and "GMT" is UTC (Universal Time, Coordinated). Invalid values are most commonly treated as UTC, on some platforms with a warning.</p></dd>
+<dt>max_gap</dt>
+<dd><p>The maximum length of a gap before MAGE is calculated on each segment independently (recommended: 180 minutes)</p></dd>
+
+
+<dt>plot</dt>
+<dd><p>Boolean. Returns ggplot if TRUE.</p></dd>
 
 
 <dt>title</dt>
@@ -133,6 +145,14 @@ can be specified for <code>version = "naive"</code>, and it is ignored if <code>
 
 <dt>show_ma</dt>
 <dd><p>Whether to show the moving average lines on the plot or not</p></dd>
+
+
+<dt>show_excursions</dt>
+<dd><p>Whether or not to visualize the excursions on the plot or not</p></dd>
+
+
+<dt>plot_type</dt>
+<dd><p>returns ggplot if "ggplot". Else returns plotly.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -167,11 +187,11 @@ be returned with one plot per subject.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Rowwise: </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   id         MAGE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Subject 1  87.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Subject 2 111. </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Subject 3 115. </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Subject 4  70.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Subject 5 146. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Subject 1  70.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Subject 2 113. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Subject 3 113. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Subject 4  71.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Subject 5 143. </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -179,7 +199,7 @@ be returned with one plot per subject.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Elizabeth Chun, Steve Broll, David Buchanan, John Muschelli, Nathaniel Fernandes, Jung Hoon Seo, Johnathan Shih, Jacek Urbanek, John Schwenck, Irina Gaynanova.</p>
+  <p></p><p>Developed by Elizabeth Chun, Steve Broll, David Buchanan, John Muschelli, Nathaniel Fernandes, Irina Gaynanova.</p>
 </div>
 
 <div class="pkgdown-footer-right">
